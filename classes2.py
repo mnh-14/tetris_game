@@ -70,7 +70,7 @@ class Gboard:
     
     
     def add_up(self, blocks: tuple[Block]):
-        """Let's a moving piece add itself to the board,\n
+        """Let a moving piece add itself to the board,\n
         finishes the game if goes over the upper limit(32 block)"""
         for block in blocks:
             v_index = block.current_index[0]
@@ -79,6 +79,7 @@ class Gboard:
             except:
                 self.setting.game_over = True
                 self.setting.button_active['new game'] = True
+
     
     def view_board(self):
         """Shows the board to the screen"""
@@ -90,9 +91,10 @@ class Gboard:
                     for block in self.game_board[key]:
                         block.draw_it()
 
+
     def modify_filled_lines(self):
         """If any line is full then it clears the line\n
-        iterates over all the lines above it,takes all the block from the line,\n
+        iterates over all the lines above it,takes all the blocks from the line,\n
         shifts them to one line down and adds to the lower line.\n
         Updates the point.
         Extra Facility: if the line reaches almost last line(V_BOXES),\n
@@ -146,9 +148,11 @@ class MovingPiece:
             if block.current_index[1] > self.right_block.current_index[1]:
                 self.right_block = block
 
+
     def show(self):
         for moving_block in self.moving_piece:
             moving_block.draw_it()
+
 
     def check_collision(self, gboard: Gboard):
         """Checks if any piece or block touched to a stopped piece og the board\n
@@ -164,6 +168,7 @@ class MovingPiece:
                         if moving_block.rect.colliderect(standing_block.rect):
                             return True
         return False
+
     
     def move_forward(self, gboard: Gboard):
         """Keeps the main piece moving. Adds up to the game board \n
@@ -177,6 +182,7 @@ class MovingPiece:
                 moving_block.turn_back()
             gboard.add_up(self.moving_piece)
             self.__init__(self.screen)
+
     
     def move_sideways(self, gboard: Gboard, direction):
         """to move left or roght"""
@@ -207,7 +213,7 @@ class MovingPiece:
             v_index, h_index =  self.moving_piece[1].current_index
             try:
                 orientation = STRUCTURES[self.key][self.orient_number](h_index, v_index)
-            except: # If orientation number exceeds total orientations
+            except KeyError: # If orientation number exceeds total orientations
                 self.orient_number = 1
                 orientation = STRUCTURES[self.key][self.orient_number](h_index, v_index)
         
@@ -227,6 +233,7 @@ class MovingPiece:
                 if self.down_block.current_index[0] < 0 or self.left_block.current_index[1] < -1 or self.right_block.current_index[1] > H_BOXES-2:
                     for moving_block in self.moving_piece:
                         moving_block.turn_back()
+
 
 
 
@@ -250,6 +257,7 @@ class OptionPallate:
         self.score_box_rect = self.setting.FONT(64).render(' '*10, True, (1,1,1)).get_rect()
         self.score_box_rect.center = self.score_rect.centerx, self.score_rect.centery + self.score_box_rect.height
     
+
     def draw_button(self, button, a_rect: Rect, width, curve, button_rect:Rect = None):
         pygame.draw.rect(self.surface_2, (70,70,70), a_rect, 0, curve)
         if button_rect is not None:
@@ -258,6 +266,7 @@ class OptionPallate:
             self.surface_2.blit(button, a_rect)
         pygame.draw.rect(self.surface_2, Settings.RED, a_rect, width, curve)
 
+
     def create_welcome_text(self):
         screen_center = self.screen.get_rect().center
         # The "WELCOME" text, and its rect object
@@ -265,11 +274,12 @@ class OptionPallate:
         self.welcome_rect = self.welcome_text.get_rect()
         self.welcome_rect.center = screen_center[0], Settings.BOARD_SIZE[1]//3
         # Welcome instruction and its rect
-        text2 = "Hit enter to start the game ."
+        text2 = "Hit ENTER to start the game ."
         self.instruction = self.setting.FONT(21).render(text2, True, Settings.BLUE)
         self.inst_rect: Rect = self.instruction.get_rect()
         self.inst_rect.center = self.screen.get_rect().centerx, self.screen.get_rect().width * 4 / 5
     
+
     def create_high_score_text(self):
         text_hscore = "High Score"
         self.high_score_text = self.setting.FONT(25).render(text_hscore, True, (200, 0, 0))
@@ -277,6 +287,7 @@ class OptionPallate:
         x_pos = (690 - Settings.BOARD_SIZE[0])//2 + Settings.BOARD_SIZE[0] + 10
         self.hscore_rect.center = x_pos, Settings.BOARD_SIZE[1]/3.5
     
+        
     def create_high_score(self):
         """Renders the high score to a surface object"""
         high_score_box_rect = self.setting.FONT(25).render(' '*25, True, (50,50,50)).get_rect()
@@ -286,10 +297,12 @@ class OptionPallate:
         self.hs_box_rect2 = self.high_score.get_rect()
         self.hs_box_rect2.center = high_score_box_rect.center
 
+
     def create_your_score_text(self):
         self.score_text = self.setting.FONT(28).render("Your Score", True, (200, 0, 0))
         self.score_rect = self.score_text.get_rect()
         self.score_rect.center = self.hscore_rect.center[0], 2*Settings.BOARD_SIZE[1]/3.5
+        
     
     def check_show_score(self):
         score = self.setting.FONT(25).render(str(self.setting.point), True, (224,0,0))
@@ -299,6 +312,7 @@ class OptionPallate:
         self.screen.blit(score, score_box_rect2)
         pygame.draw.rect(self.screen, Settings.RED, self.score_box_rect, 1, 12)
 
+        
     def create_yes_no_button(self):
         yes_button = self.setting.FONT(18).render('    Yes    ', True, (255,0,0))
         no_button = self.setting.FONT(18).render('    No    ', True, (255,0,0))
@@ -307,6 +321,7 @@ class OptionPallate:
         self.yes_rect.center, self.no_rect.center = (x_pos, y_pos), (x_pos*2, y_pos)
         self.yes_button, self.no_button = yes_button, no_button
 
+        
     def create_quit_text(self):
         text = "Want to Quit ?"
         self.quit_bg_rect: Rect = self.setting.FONT(35).render(' '*35, True, (0,0,0)).get_rect()
@@ -314,6 +329,7 @@ class OptionPallate:
         self.quit_rect: Rect = self.quit_text.get_rect()
         self.quit_rect.center = self.quit_bg_rect.center = self.start_box_rect.center
    
+        
     def create_start_button(self):
         start_box: Rect = self.setting.FONT(35).render(' '*20, True, (0,0,0)).get_rect()
         start_box.center = self.screen.get_rect().centerx ,self.screen.get_rect().height * 2 /3
@@ -322,6 +338,7 @@ class OptionPallate:
         self.start_rect.center = start_box.center
         self.start_box_rect = start_box
     
+        
     def create_pause_button(self):
         b_pause_color = (200, 0, 0)
         self.bg_pause = (50,50,50)
@@ -329,6 +346,7 @@ class OptionPallate:
         self.pause_rect: Rect = self.pause_button.get_rect()
         self.pause_rect.center = self.setting.BOARD_SIZE[0]/2 + 10, self.setting.BOARD_SIZE[1]/2
 
+        
     def create_game_over_button(self):
         button_color = (200, 0, 0)
         self.gov_bg = (50, 50, 50)
@@ -336,6 +354,7 @@ class OptionPallate:
         self.gov_rect = self.gov_button.get_rect()
         self.gov_rect.center = self.setting.BOARD_SIZE[0]//2 + 10, self.setting.BOARD_SIZE[1]//3
     
+        
     def create_start_again_win(self):
         # The game over window where "Start Again" & "Quit Game" Buttons are projected
         window_rect: Rect = self.setting.FONT(55).render(' '*25, True, (0,0,0)).get_rect()
@@ -351,6 +370,7 @@ class OptionPallate:
         self.quit_game_rect.centerx = window_rect.left + window_rect.width * 7 /10
         self.gov_window = window_rect
 
+        
     def show_pallet(self):
         self.screen.blit(self.high_score_text, self.hscore_rect)
         pygame.draw.rect(self.screen, (50,50,50), self.hs_box_rect, 0, 7)
@@ -384,7 +404,6 @@ class OptionPallate:
                 else:
                     pygame.draw.rect(self.screen,self.setting.WHITE, self.quit_game_rect, 2, 4)
             
-
         if self.setting.starting_mode:
             self.surface_2.fill(Settings.BLACK) # 2nd screen coloring
             self.surface_2.blit(self.welcome_text, self.welcome_rect)

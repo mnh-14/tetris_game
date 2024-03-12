@@ -39,6 +39,7 @@ def check_events(gboard: Gboard, moving_piece:MovingPiece, setting: Settings):
             if event.key == pygame.K_RETURN:
                 swap_modes(gboard, moving_piece, setting)
 
+
 def button_active_swap(setting: Settings, b1, b2):
     if setting.button_active[b1]:
         setting.button_active[b1] = False
